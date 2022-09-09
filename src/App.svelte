@@ -1,45 +1,44 @@
 <script>
-  import svelteLogo from './assets/svelte.svg'
-  import Counter from './lib/Counter.svelte'
+	import axios from 'axios';
+
+	let username = '';
+	let password = '';
+
+	// Featch API
+	const url = 'https://authentication.kordis.fr/oauth/authorize?response_type=token&client_id=skolae-app';
+
+	// Async / Await
+	const getData = async (url) => {
+		try {
+			const response = await axios({
+				method: 'GET',
+				url: 'https://authentication.kordis.fr/oauth/authorize?response_type=token&client_id=skolae-app',
+				headers: {
+					Authorization: `Basic ${btoa(username + ':' + password)}`,
+				},
+				maxRedirects: 0,
+			});
+
+			console.log('response.data:', response.data);
+
+			const response2 = await axios(response.data.location.url);
+
+			console.log('response2.data:', response2.data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
 </script>
 
 <main>
-  <div>
-    <a href="https://vitejs.dev" target="_blank"> 
-      <img src="/vite.svg" class="logo" alt="Vite Logo" />
-    </a>
-    <a href="https://svelte.dev" target="_blank"> 
-      <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-    </a>
-  </div>
-  <h1>Vite + Svelte</h1>
-
-  <div class="card">
-    <Counter />
-  </div>
-
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank">SvelteKit</a>, the official Svelte app framework powered by Vite!
-  </p>
-
-  <p class="read-the-docs">
-    Click on the Vite and Svelte logos to learn more
-  </p>
+	<div class="wrapper flex">
+		<h1 class="title flex">Mini-Corner CSV Cleaner</h1>
+		<input type="text" bind:value={username}>
+		<input type="password" bind:value={password}>
+		<button class="button login" on:click={() => getData(url)}>Login</button>
+	</div>
 </main>
 
 <style>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.svelte:hover {
-    filter: drop-shadow(0 0 2em #ff3e00aa);
-  }
-  .read-the-docs {
-    color: #888;
-  }
 </style>
